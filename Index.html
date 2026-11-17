@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Condo Hub - Official Server Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-top: #1d0936;
+      --bg-mid: #130624;
+      --bg-bottom: #0c0317;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --pill-bg: rgba(255, 255, 255, 0.06);
+      --purple-accent: #a855f7;
+      --purple-light: #c084fc;
+      --pink-title: #f3b8e8;
+      --chat-name: #f43f5e;
+      --green-online: #22c55e;
+      --text-main: #ffffff;
+      --text-muted: #9e95b3;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 45%, var(--bg-bottom) 100%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes radarPing {
+      0% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+      75%, 100% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes countPop {
+      0% { transform: scale(1); color: #ffffff; }
+      50% { transform: scale(1.12); color: #f3b8e8; }
+      100% { transform: scale(1); color: #ffffff; }
+    }
+
+    @keyframes chatSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-14px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      padding-bottom: 48px;
+    }
+
+    /* Header / Navbar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(29, 9, 54, 0.82);
+    }
+
+    .logo {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--pill-bg);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #d8cce8;
+    }
+
+    .dot-wrapper {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dot-core {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--purple-accent);
+      z-index: 2;
+    }
+
+    .dot-ping {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--purple-accent);
+      animation: radarPing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    /* Main Content */
+    main {
+      padding: 28px 20px 0;
+    }
+
+    /* Hero Section */
+    .hero {
+      animation: fadeSlideUp 0.6s ease-out both;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(168, 85, 247, 0.14);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      color: var(--purple-light);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero-title {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span {
+      display: block;
+      color: var(--pink-title);
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* Featured Banner Image */
+    .featured-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      background-color: #1c102b;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .featured-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .featured-card:hover img {
+      transform: scale(1.03);
+    }
+
+    .live-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);
+      z-index: 2;
+    }
+
+    .live-badge .dot-core,
+    .live-badge .dot-ping {
+      background-color: #ffffff;
+      width: 6px;
+      height: 6px;
+    }
+
+    .featured-overlay {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(12, 3, 23, 0.78);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #e9d5ff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Server List Section */
+    .server-section {
+      margin-top: 34px;
+      animation: fadeSlideUp 0.7s ease-out 0.15s both;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .server-count {
+      background: var(--pill-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    /* Server Cards */
+    .server-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .server-card {
+      background: rgba(20, 8, 36, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 16px 16px 18px;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .server-card:hover {
+      border-color: rgba(192, 132, 252, 0.35);
+      box-shadow: 0 12px 32px rgba(139, 92, 246, 0.14);
+    }
+
+    .server-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .server-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .badges-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Badge Jumlah Player */
+    .player-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      color: #86efac;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .player-badge .dot-core,
+    .player-badge .dot-ping {
+      background-color: var(--green-online);
+      width: 6px;
+      height: 6px;
+    }
+
+    .player-num.updated {
+      animation: countPop 0.45s ease;
+    }
+
+    /* Badge Available */
+    .available-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.14);
+      color: var(--purple-light);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .available-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--purple-accent);
+    }
+
+    /* Thumbnail Wrapper */
+    .server-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #1c102b;
+    }
+
+    .server-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.45s ease;
+    }
+
+    .server-card:hover .server-thumb img {
+      transform: scale(1.03);
+    }
+
+    /* Bar Info Kapasitas & Ping */
+    .server-meta {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .ping-tag {
+      color: #c084fc;
+      font-weight: 600;
+    }
+
+    .capacity-bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .capacity-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #9333ea, #f3b8e8);
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .capacity-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: shimmer 2.2s infinite;
+    }
+
+    /* Tombol JOIN & Server ID */
+    .join-action-area {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .join-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      position: relative;
+      width: 100%;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      padding: 15px 20px;
+      background: linear-gradient(90deg, #b584ff 0%, #df7ad3 50%, #fb74b7 100%);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(219, 122, 211, 0.42);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      overflow: hidden;
+    }
+
+    .join-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+      transition: left 0.55s ease;
+    }
+
+    .join-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.06);
+      box-shadow: 0 4px 30px rgba(244, 114, 182, 0.62);
+    }
+
+    .join-btn:hover::before {
+      left: 100%;
+    }
+
+    .join-btn:active {
+      transform: scale(0.98);
+    }
+
+    .server-id-text {
+      margin-top: 11px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #8f85a6;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      user-select: none;
+    }
+
+    .server-id-text:hover {
+      color: #d8b4fe;
+    }
+
+    /* Live Chat Feed di Bawah Tiap Server (Sesuai Foto Referensi) */
+    .live-feed-wrapper {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+    }
+
+    .live-feed-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, #000000 76%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000000 76%, transparent 100%);
+    }
+
+    .chat-item {
+      background: rgba(255, 255, 255, 0.028);
+      border-left: 3px solid #f43f5e;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 13px;
+      line-height: 1.35;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .chat-item.is-new {
+      animation: chatSlideIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .chat-item:last-child {
+      opacity: 0.42;
+    }
+
+    .chat-username {
+      color: var(--chat-name);
+      font-weight: 700;
+      letter-spacing: 0.1px;
+    }
+
+    .chat-message {
+      color: #f1edf9;
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Top Navbar -->
+    <header>
+      <div class="logo">CONDO HUB</div>
+      <div class="status-pill">
+        <span class="dot-wrapper">
+          <span class="dot-ping"></span>
+          <span class="dot-core"></span>
+        </span>
+        System Online
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-badge">OFFICIAL SERVER HUB</div>
+        <h1 class="hero-title">
+          Welcome To
+          <span>Condo Hub</span>
+        </h1>
+        <p class="hero-subtitle">
+          Browse our growing library of condo servers. New games added regularly — verified and ready to go.
+        </p>
+
+        <!-- Gambar Utama dengan Badge LIVE -->
+        <div class="featured-card">
+          <div class="live-badge">
+            <span class="dot-wrapper">
+              <span class="dot-ping"></span>
+              <span class="dot-core"></span>
+            </span>
+            LIVE
+          </div>
+          <img src="https://files.catbox.moe/a257pl.jpeg" alt="Featured Server">
+          <div class="featured-overlay">
+            <span id="total-players">53</span> Players Active
+          </div>
+        </div>
+      </section>
+
+      <!-- Daftar Server -->
+      <section class="server-section">
+        <div class="section-header">
+          <h2 class="section-title">Choose Server</h2>
+          <span class="server-count">3 Active Servers</span>
+        </div>
+
+        <div class="server-list">
+          <!-- Server 1 -->
+          <div class="server-card">
+            <div class="server-card-header">
+              <span class="server-name">Server 1</span>
+              <div class="badges-group">
+                <span class="player-badge">
+                  <span class="dot-wrapper">
+                    <span class="dot-ping"></span>
+                    <span class="dot-core"></span>
+                  </span>
+                  <span class="player-num" id="p-count-1" data-current="17" data-max="30">17/30 Player</span>
+                </span>
+                <span class="available-badge">
+                  <span class="available-dot"></span>
+                  Available
+                </span>
+              </div>
+            </div>
+            <div class="server-thumb">
+              <img src="https://files.catbox.moe/ldh3zm.jpeg" alt="Server 1">
+            </div>
+            <div class="server-meta">
+              <div class="meta-row">
+                <span>Server Capacity</span>
+                <span class="ping-tag" id="ping-1">24 ms • Verified</span>
+              </div>
+              <div class="capacity-bar">
+                <div class="capacity-fill" id="bar-1" style="width: 56%;"></div>
+              </div>
+            </div>
+            <div class="join-action-area">
+              <a class="join-btn" href="https://www.roblox.com.ss/games/14153443454/Meet-a-neko?privateServerLinkCode=18173081164858326167818417138890">JOIN</a>
+              <span class="server-id-text" onclick="copyServerId(this, '1683-7023')">ID: 1683-7023</span>
+            </div>
+            <div class="live-feed-wrapper">
+              <div class="live-feed-list" id="feed-1"></div>
+            </div>
+          </div>
+
+          <!-- Server 2 -->
+          <div class="server-card">
+            <div class="server-card-header">
+              <span class="server-name">Server 2</span>
+              <div class="badges-group">
+                <span class="player-badge">
+                  <span class="dot-wrapper">
+                    <span class="dot-ping"></span>
+                    <span class="dot-core"></span>
+                  </span>
+                  <span class="player-num" id="p-count-2" data-current="24" data-max="30">24/30 Player</span>
+                </span>
+                <span class="available-badge">
+                  <span class="available-dot"></span>
+                  Available
+                </span>
+              </div>
+            </div>
+            <div class="server-thumb">
+              <img src="https://files.catbox.moe/7icn67.jpeg" alt="Server 2">
+            </div>
+            <div class="server-meta">
+              <div class="meta-row">
+                <span>Server Capacity</span>
+                <span class="ping-tag" id="ping-2">31 ms • Verified</span>
+              </div>
+              <div class="capacity-bar">
+                <div class="capacity-fill" id="bar-2" style="width: 80%;"></div>
+              </div>
+            </div>
+            <div class="join-action-area">
+              <a class="join-btn" href="https://roblox.com.bz/games/135402310967020/Talk-to-AI-Mimi?privateServerLinkCode=50843814936746315448912801647532">JOIN</a>
+              <span class="server-id-text" onclick="copyServerId(this, '4829-1056')">ID: 4829-1056</span>
+            </div>
+            <div class="live-feed-wrapper">
+              <div class="live-feed-list" id="feed-2"></div>
+            </div>
+          </div>
+
+          <!-- Server 3 -->
+          <div class="server-card">
+            <div class="server-card-header">
+              <span class="server-name">Server 3</span>
+              <div class="badges-group">
+                <span class="player-badge">
+                  <span class="dot-wrapper">
+                    <span class="dot-ping"></span>
+                    <span class="dot-core"></span>
+                  </span>
+                  <span class="player-num" id="p-count-3" data-current="12" data-max="30">12/30 Player</span>
+                </span>
+                <span class="available-badge">
+                  <span class="available-dot"></span>
+                  Available
+                </span>
+              </div>
+            </div>
+            <div class="server-thumb">
+              <img src="https://files.catbox.moe/fxmzrc.jpeg" alt="Server 3">
+            </div>
+            <div class="server-meta">
+              <div class="meta-row">
+                <span>Server Capacity</span>
+                <span class="ping-tag" id="ping-3">19 ms • Verified</span>
+              </div>
+              <div class="capacity-bar">
+                <div class="capacity-fill" id="bar-3" style="width: 40%;"></div>
+              </div>
+            </div>
+            <div class="join-action-area">
+              <a class="join-btn" href="https://roblox.com.bz/games/139410450104051/Chat-with-AI-Emiko?privateServerLinkCode=50843814936746315448912801647532">JOIN</a>
+              <span class="server-id-text" onclick="copyServerId(this, '7391-6482')">ID: 7391-6482</span>
+            </div>
+            <div class="live-feed-wrapper">
+              <div class="live-feed-list" id="feed-3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Simulasi jumlah player & ping live
+    const servers = [
+      { id: 1, min: 14, max: 22, current: 17, cap: 30, basePing: 24 },
+      { id: 2, min: 20, max: 28, current: 24, cap: 30, basePing: 31 },
+      { id: 3, min: 9,  max: 16, current: 12, cap: 30, basePing: 19 }
+    ];
+
+    function updateLiveStats() {
+      let total = 0;
+
+      servers.forEach(srv => {
+        const delta = Math.floor(Math.random() * 3) - 1;
+        srv.current = Math.max(srv.min, Math.min(srv.max, srv.current + delta));
+        total += srv.current;
+
+        const countEl = document.getElementById(`p-count-${srv.id}`);
+        const barEl = document.getElementById(`bar-${srv.id}`);
+        const pingEl = document.getElementById(`ping-${srv.id}`);
+
+        if (countEl && delta !== 0) {
+          countEl.textContent = `${srv.current}/${srv.cap} Player`;
+          countEl.dataset.current = srv.current;
+
+          countEl.classList.remove('updated');
+          void countEl.offsetWidth;
+          countEl.classList.add('updated');
+        }
+
+        if (barEl) {
+          const percent = Math.round((srv.current / srv.cap) * 100);
+          barEl.style.width = `${percent}%`;
+        }
+
+        if (pingEl) {
+          const pingJitter = srv.basePing + (Math.floor(Math.random() * 5) - 2);
+          pingEl.textContent = `${pingJitter} ms • Verified`;
+        }
+      });
+
+      const totalEl = document.getElementById('total-players');
+      if (totalEl) {
+        totalEl.textContent = total;
+      }
+    }
+
+    setInterval(updateLiveStats, 3500);
+
+    // Salin Server ID saat teks ID diklik
+    function copyServerId(el, idText) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(idText);
+      }
+      const original = `ID: ${idText}`;
+      el.textContent = `Copied: ${idText}`;
+      el.style.color = '#f3b8e8';
+      setTimeout(() => {
+        el.textContent = original;
+        el.style.color = '';
+      }, 1400);
+    }
+
+    // Pool username unik (dijamin tidak pernah ada nama ganda tampil bersamaan di seluruh server)
+    const usernamePool = [
+      "VeraBaby", "ChloeSlay", "TaraBrat", "Kylie_Hot", "EllePrincess", "Bella_Bimbo",
+      "MilaVibes", "Luna_Xo", "SiennaDoll", "Zoe_Baddie", "NoraChic", "Aria_Glow",
+      "MayaAngel", "Lexi_Luv", "Jade_Queen", "RubySpark", "Sasha_Cutie", "Kira_Babe",
+      "Nova_Star", "Ivy_Dreams", "Tessa_Royale", "Ayla_Pink", "Celine_Vogue", "Dahlia_Xo",
+      "Esme_Velvet", "Freya_Charm", "Gigi_Honey", "Hazel_Moon", "Iris_Aura", "Jolie_Kiss",
+      "Kaia_Frost", "Lana_Cherry", "Mina_Sugar", "Nadia_Rose", "Olive_Glow", "Piper_Doll",
+      "Quinn_Blush", "Rhea_Silk", "Skye_Pearl", "Talia_Mint", "Uma_Peach", "Vivi_Plush",
+      "Willa_Cloud", "Xena_Flame", "Yara_Muse", "Zara_Luxe", "Alina_Diva", "Bianca_Babe",
+      "Camila_Sweet", "Delilah_Xo", "Elena_Sparkle", "Fiona_Gem", "Gemma_Bliss", "Hanna_Vibe",
+      "Ines_Crown", "Juliet_Star", "Kendra_Glow", "Lydia_Lush", "Melody_Pop", "Naomi_Silk",
+      "Ophelia_Xo", "Paige_Honey", "Rosie_Baddie", "Selena_Doll", "Valerie_Kiss", "Winnie_Luv"
+    ];
+
+    const messagePool = [
+      "so cute, literally crying 💥",
+      "he just kicked him is giving bad boy 💅",
+      "I need him rn 😭",
+      "OMG, stunning 💀",
+      "Bruh, so cute 💦",
+      "wait this lobby is actually crazy 🔥",
+      "no way he just did that 😭",
+      "obsessed with this avatar ngl 💖",
+      "best server here fr ✨",
+      "ayo who else just joined 👀",
+      "literally iconic behavior 💅",
+      "she ate and left no crumbs 🔥",
+      "why is everyone so fine here 😩",
+      "this server is wild 💀",
+      "instant join worth it 💖",
+      "bro got zero chill rn 😭",
+      "serving looks 24/7 ✨",
+      "hold on let him cook 🔥",
+      "actual main character energy 💅",
+      "someone come look at this 💀"
+    ];
+
+    // Menyimpan seluruh username yang sedang tampil di semua server agar 100% berbeda
+    const activeNames = new Set();
+    const recentCooldown = [];
+    const VISIBLE_ROWS = 6;
+
+    function getUniqueUsername() {
+      const available = usernamePool.filter(
+        name => !activeNames.has(name) && !recentCooldown.includes(name)
+      );
+      const candidates = available.length > 0
+        ? available
+        : usernamePool.filter(name => !activeNames.has(name));
+
+      const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+      activeNames.add(chosen);
+
+      recentCooldown.push(chosen);
+      if (recentCooldown.length > 25) {
+        recentCooldown.shift();
+      }
+      return chosen;
+    }
+
+    function getRandomMessage(excludeMsg) {
+      let msg;
+      do {
+        msg = messagePool[Math.floor(Math.random() * messagePool.length)];
+      } while (msg === excludeMsg);
+      return msg;
+    }
+
+    function createChatElement(username, message, isNew = false) {
+      const div = document.createElement('div');
+      div.className = isNew ? 'chat-item is-new' : 'chat-item';
+      div.dataset.username = username;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'chat-username';
+      nameSpan.textContent = username;
+
+      const msgSpan = document.createElement('span');
+      msgSpan.className = 'chat-message';
+      msgSpan.textContent = message;
+
+      div.appendChild(nameSpan);
+      div.appendChild(msgSpan);
+      return div;
+    }
+
+    // Inisialisasi awal tiap server dengan 6 nama berbeda
+    const lastMessages = { 1: "", 2: "", 3: "" };
+
+    [1, 2, 3].forEach(serverId => {
+      const container = document.getElementById(`feed-${serverId}`);
+      for (let i = 0; i < VISIBLE_ROWS; i++) {
+        const uname = getUniqueUsername();
+        const msg = getRandomMessage(lastMessages[serverId]);
+        lastMessages[serverId] = msg;
+        container.appendChild(createChatElement(uname, msg, false));
+      }
+    });
+
+    // Fungsi push chat baru secara real-time per server
+    function pushNewChat(serverId) {
+      const container = document.getElementById(`feed-${serverId}`);
+      if (!container) return;
+
+      // Hapus baris paling bawah dan bebaskan username-nya
+      if (container.children.length >= VISIBLE_ROWS) {
+        const oldest = container.lastElementChild;
+        if (oldest && oldest.dataset.username) {
+          activeNames.delete(oldest.dataset.username);
+        }
+        container.removeChild(oldest);
+      }
+
+      const newUser = getUniqueUsername();
+      const newMsg = getRandomMessage(lastMessages[serverId]);
+      lastMessages[serverId] = newMsg;
+
+      const newEl = createChatElement(newUser, newMsg, true);
+      container.insertBefore(newEl, container.firstChild);
+    }
+
+    // Jalankan update real-time dengan jeda berbeda tiap server agar terasa hidup & alami
+    function scheduleFeedLoop(serverId, minDelay, maxDelay) {
+      const delay = Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+      setTimeout(() => {
+        pushNewChat(serverId);
+        scheduleFeedLoop(serverId, minDelay, maxDelay);
+      }, delay);
+    }
+
+    scheduleFeedLoop(1, 2200, 3600);
+    scheduleFeedLoop(2, 2600, 4100);
+    scheduleFeedLoop(3, 2400, 3900);
+  </script>
+
+</body>
+</html>
